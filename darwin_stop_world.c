@@ -414,6 +414,18 @@ GC_INNER void GC_push_all_stacks(void)
                                         &altstack_lo, &altstack_hi, &found_me);
 
           if (lo) {
+            //CHANGE BEGIN
+            /*
+             When executing a coroutine the sp will not be valid for the threads original stack
+             See: https://github.com/ivmai/bdwgc/issues/362
+             And: https://github.com/NixOS/nix/pull/6987/commits/f4d7208e235d129ad3b0fe25b518fa36d960ec4d
+             */
+            size_t stack_limit = pthread_get_stacksize_np(p->id);
+            if (lo >= hi || lo < hi - stack_limit) {
+                lo = hi - stack_limit;
+            }
+            //CHANGE END
+              
             GC_ASSERT((word)lo <= (word)hi);
             total_size += hi - lo;
             GC_push_all_stack_sections(lo, hi, p -> crtn -> traced_stack_sect);

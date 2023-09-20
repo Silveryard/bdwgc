@@ -922,9 +922,13 @@ STATIC word GC_push_stack_for(GC_thread thread, thread_id_t self_id,
     /* If not current thread then it is possible for sp to point to     */
     /* the guarded (untouched yet) page just below the current          */
     /* stack_min of the thread.                                         */
+    //CHANGE BEGIN
+    /*
     if (is_self || (word)sp >= (word)stack_end
         || (word)(sp + GC_page_size) < (word)stack_min)
       WARN("Thread stack pointer %p out of range, pushing everything\n", sp);
+    */
+    //CHANGE END
 #   ifdef DEBUG_THREADS
       GC_log_printf("Pushing stack for 0x%x from (min) %p to %p from 0x%x\n",
                     (int)(thread -> id), (void *)stack_min, (void *)stack_end,
